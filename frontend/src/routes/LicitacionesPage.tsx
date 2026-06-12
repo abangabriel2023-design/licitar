@@ -1,22 +1,36 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getLicitaciones } from "@/services/licitaciones";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getLicitaciones, agregarFavorito } from "@/services/licitaciones";
 import Badge from "@/components/Badge";
 import Spinner from "@/components/Spinner";
 import { Search, Star } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 export default function LicitacionesPage() {
   const [search, setSearch] = useState("");
   const [estado, setEstado] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["licitaciones", { search, estado, page }],
-    queryFn: () => getLicitaciones({ search, estado: estado || undefined, page }),
-  });
+  const navigate = useNavigate();
 
+const { data, isLoading } = useQuery({
+  queryKey: ["licitaciones", { search, estado, page }],
+  queryFn: () =>
+    getLicitaciones({
+      search,
+      estado: estado || undefined,
+      page,
+    }),
+});
+
+const favoritoMutation = useMutation({
+  mutationFn: agregarFavorito,
+  onSuccess: () => {
+    alert("Licitación agregada a favoritos");
+  },
+});
   return (
     <div className="p-8">
       <div className="flex items-center justify-between mb-6">
@@ -50,19 +64,21 @@ export default function LicitacionesPage() {
       </div>
 
       {isLoading ? <Spinner /> : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Expediente</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Título</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Organismo</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Estado</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Apertura</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Monto</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
+          <thead className="bg-slate-800 border-b border-slate-700">
+  <tr>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Expediente</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Título</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Organismo</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Estado</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Apertura</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Monto</th>
+    <th className="text-left px-4 py-3 font-medium text-gray-600">Acciones</th>
+  </tr>
+</thead>
+
+<tbody className="divide-y divide-gray-100">
               {data?.results.map((l) => (
                 <tr key={l.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{l.numero_expediente || "—"}</td>
@@ -75,10 +91,34 @@ export default function LicitacionesPage() {
                   <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
                     {l.fecha_apertura ? format(new Date(l.fecha_apertura), "dd MMM yy", { locale: es }) : "—"}
                   </td>
-                  <td className="px-4 py-3 text-gray-700 whitespace-nowrap">
-                    {l.monto_estimado ? `$${Number(l.monto_estimado).toLocaleString("es-AR")}` : "—"}
-                  </td>
-                </tr>
+                  <td className="px-4 py-3">
+  <div className="flex gap-2">
+
+    <button
+      className="px-2 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded text-xs"
+   onClick={() => navigate(`/licitaciones/${l.id}`)}
+    >
+      Ver
+    </button>
+
+<button
+  className="px-2 py-1 bg-yellow-600 hover:bg-yellow-500 text-white rounded text-xs"
+  onClick={() => favoritoMutation.mutate(l.id)}
+>
+  ⭐
+</button>
+
+    <button
+      className="px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs"
+      onClick={() => alert("Análisis IA próximamente")}
+    >
+      IA
+    </button>
+
+  </div>
+</td>
+
+</tr>
               ))}
             </tbody>
           </table>

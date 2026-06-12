@@ -21,13 +21,16 @@ export default function LoginPage() {
     resolver: zodResolver(schema),
   });
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: ({ email, password }: FormData) => login(email, password),
-    onSuccess: (data) => {
-      setAuth(data.access, { email: data.email, role: data.role });
-      navigate("/dashboard");
-    },
-  });
+const { mutate, isPending, error } = useMutation({
+  mutationFn: ({ email, password }: FormData) => login(email, password),
+  onSuccess: (data, variables) => {
+    setAuth(data.access, {
+      email: variables.email,
+      role: "user",
+    });
+    navigate("/dashboard");
+  },
+});
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

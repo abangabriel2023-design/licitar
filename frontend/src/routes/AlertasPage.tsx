@@ -3,6 +3,7 @@ import api from "@/lib/api";
 import { Bell, Plus, Trash2 } from "lucide-react";
 import type { Alerta } from "@/types";
 import Spinner from "@/components/Spinner";
+import { crearAlerta } from "@/services/alertas";
 
 export default function AlertasPage() {
   const qc = useQueryClient();

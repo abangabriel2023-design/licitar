@@ -19,12 +19,12 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+  <div className="flex h-screen bg-slate-950">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-primary-700">LicitAR</h1>
-          <p className="text-xs text-gray-500 mt-1">Licitaciones públicas de salud</p>
+     <aside className="w-72 bg-slate-900 border-r border-slate-800 flex flex-col">
+        <div className="p-6 border-b border-slate-800">
+        <h1 className="text-3xl font-bold text-cyan-400">LicitAR</h1>
+          <p className="text-xs text-slate-400 mt-1">Inteligencia de Licitaciones</p>
         </div>
         <nav className="flex-1 p-4 space-y-1">
           {nav.map(({ to, icon: Icon, label }) => (
@@ -35,9 +35,8 @@ export default function Layout() {
                 clsx(
                   "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary-50 text-primary-700"
-                    : "text-gray-600 hover:bg-gray-100"
-                )
+  ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+  : "text-slate-400 hover:bg-slate-800 hover:text-white"                )
               }
             >
               <Icon size={18} />
@@ -45,11 +44,11 @@ export default function Layout() {
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-gray-200">
-          <p className="text-xs text-gray-500 mb-2 truncate">{user?.email}</p>
+      <div className="p-4 border-t border-slate-800">
+         <p className="text-xs text-slate-400 mb-2 truncate">{user?.email}</p>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
+            className="flex items-center gap-2 text-sm text-slate-400 hover:text-red-400 transition-colors"
           >
             <LogOut size={16} /> Cerrar sesión
           </button>

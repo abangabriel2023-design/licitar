@@ -5,12 +5,17 @@ import DashboardPage from "./routes/DashboardPage";
 import LicitacionesPage from "./routes/LicitacionesPage";
 import AlertasPage from "./routes/AlertasPage";
 import Layout from "./components/Layout";
+import LicitacionDetallePage from "./routes/LicitacionDetallePage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
-  return token ? <>{children}</> : <Navigate to="/login" replace />;
-}
 
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+}
 export default function App() {
   return (
     <BrowserRouter>
@@ -27,6 +32,7 @@ export default function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="licitaciones" element={<LicitacionesPage />} />
+          <Route path="licitaciones/:id" element={<LicitacionDetallePage />} />
           <Route path="alertas" element={<AlertasPage />} />
         </Route>
       </Routes>
